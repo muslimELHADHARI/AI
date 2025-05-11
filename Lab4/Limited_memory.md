@@ -1,6 +1,10 @@
-Lab 4: Limited Memory Informed Search Algorithms
-Complete Python Implementation
+# Lab 4: Limited Memory Informed Search Algorithms
+
+## Complete Python Implementation
+
 The following Python code includes the maze generator, implementations of RBFS, SMA*, and IDA*, and an experiment framework to compare their performance. The code generates mazes, runs each algorithm, and collects metrics (iterations, execution time, path length, memory usage) for maze sizes 10x10, 20x20, and 30x30.
+
+```python
 import random
 import time
 import sys
@@ -230,91 +234,51 @@ if __name__ == "__main__":
     random.seed(42)
     # Run experiments
     run_experiments()
+```
 
-Report Outline
-Introduction
+## Report Outline
+
+### Introduction
 The maze problem requires finding the shortest path from a start point (S) to a goal point (G) in a grid with open cells (0) and walls (1). This lab implements three memory-efficient search algorithms—Recursive Best-First Search (RBFS), Simplified Memory-Bounded A* (SMA*), and Iterative Deepening A* (IDA*)—to solve mazes of sizes 10x10, 20x20, and 30x30. The goal is to compare their performance based on iterations, execution time, path quality, and memory efficiency, analyzing how memory constraints impact search efficiency.
-Methodology
-Maze Generation
-Mazes are generated using a recursive backtracker algorithm, which creates perfect mazes with a unique path between any two points. The generate_maze function produces a grid with randomly placed start and goal positions, ensuring connectivity.
-Algorithm Implementation
 
-RBFS: Uses recursive calls to explore nodes with the lowest f-cost (g + h), storing only the current path and best alternative for linear memory usage.
-SMA: Extends A with a memory limit, pruning the highest f-cost node when memory is full and updating its parent’s f-cost for potential regeneration.
-IDA*: Performs depth-first search with iterative deepening based on f-cost thresholds, minimizing memory by exploring nodes within the current bound.
+### Methodology
+#### Maze Generation
+Mazes are generated using a recursive backtracker algorithm, which creates perfect mazes with a unique path between any two points. The `generate_maze` function produces a grid with randomly placed start and goal positions, ensuring connectivity.
 
-Experiments
-The experiment framework (run_experiments) tests each algorithm on five mazes per size (10x10, 20x20, 30x30). Metrics collected include:
+#### Algorithm Implementation
+- **RBFS**: Uses recursive calls to explore nodes with the lowest f-cost (g + h), storing only the current path and best alternative for linear memory usage.
+- **SMA***: Extends A* with a memory limit, pruning the highest f-cost node when memory is full and updating its parent’s f-cost for potential regeneration.
+- **IDA***: Performs depth-first search with iterative deepening based on f-cost thresholds, minimizing memory by exploring nodes within the current bound.
 
-Iterations: Number of node expansions (recursive calls for RBFS/IDA*, nodes popped for SMA*).
-Execution Time: Runtime in seconds using Python’s time module.
-Path Quality: Length of the returned path to verify optimality.
-Memory Efficiency: Maximum number of nodes stored (successors in RBFS, open list in SMA*, path length in IDA*).
+#### Experiments
+The experiment framework (`run_experiments`) tests each algorithm on five mazes per size (10x10, 20x20, 30x30). Metrics collected include:
+- **Iterations**: Number of node expansions (recursive calls for RBFS/IDA*, nodes popped for SMA*).
+- **Execution Time**: Runtime in seconds using Python’s `time` module.
+- **Path Quality**: Length of the returned path to verify optimality.
+- **Memory Efficiency**: Maximum number of nodes stored (successors in RBFS, open list in SMA*, path length in IDA*).
 
 SMA* uses a memory limit of 100 nodes, adjustable to test different constraints. Results are averaged across trials to account for variability.
-Results
+
+### Results
 The experiment results are printed in a table format, showing average iterations, execution time, path length, and memory usage for each algorithm and maze size. Example output (values depend on execution):
 
-
-
-Maze Size
-Algorithm
-Avg Iterations
-Avg Execution Time (s)
-Avg Path Length
-Avg Max Memory (nodes)
-
-
-
-10x10
-RBFS
-[TBD]
-[TBD]
-[TBD]
-[TBD]
-
-
-10x10
-SMA*
-[TBD]
-[TBD]
-[TBD]
-[TBD]
-
-
-10x10
-IDA*
-[TBD]
-[TBD]
-[TBD]
-[TBD]
-
-
-20x20
-RBFS
-[TBD]
-[TBD]
-[TBD]
-[TBD]
-
-
-...
-...
-...
-...
-...
-...
-
+| Maze Size | Algorithm | Avg Iterations | Avg Execution Time (s) | Avg Path Length | Avg Max Memory (nodes) |
+|-----------|-----------|----------------|------------------------|-----------------|-------------------------|
+| 10x10     | RBFS      | [TBD]          | [TBD]                  | [TBD]           | [TBD]                   |
+| 10x10     | SMA*      | [TBD]          | [TBD]                  | [TBD]           | [TBD]                   |
+| 10x10     | IDA*      | [TBD]          | [TBD]                  | [TBD]           | [TBD]                   |
+| 20x20     | RBFS      | [TBD]          | [TBD]                  | [TBD]           | [TBD]                   |
+| ...       | ...       | ...            | ...                    | ...             | ...                     |
 
 To generate actual values, run the code and copy the output. Visualize trends using graphs (e.g., execution time vs. maze size) in your report.
-Discussion
+
+### Discussion
 Analyze the results to address the lab’s questions:
+- **Memory Efficiency**: RBFS and IDA* typically use linear memory (O(bd), where b is the branching factor and d is the depth), making them more efficient than SMA*, which depends on the memory limit.
+- **SMA* Behavior with Limited Memory**: With a low memory limit (e.g., 100 nodes), SMA* may prune promising nodes, increasing iterations or failing to find a path. Higher limits improve performance, approaching standard A*.
+- **Performance on Larger Mazes**: RBFS and IDA* are expected to scale better in larger mazes due to low memory requirements, while SMA* may struggle if the memory limit is insufficient.
+- **IDA* Optimality**: IDA* guarantees optimal paths with an admissible heuristic (Manhattan distance), as it explores all nodes within increasing f-cost bounds.
+- **Sensitivity to Maze Complexity**: IDA* may perform poorly in mazes with many nodes having similar f-values, leading to repeated explorations. RBFS may be less sensitive due to its best-first approach, while SMA*’s performance depends on memory availability and maze structure.
 
-Memory Efficiency: RBFS and IDA* typically use linear memory (O(bd), where b is the branching factor and d is the depth), making them more efficient than SMA*, which depends on the memory limit.
-SMA Behavior with Limited Memory: With a low memory limit (e.g., 100 nodes), SMA may prune promising nodes, increasing iterations or failing to find a path. Higher limits improve performance, approaching standard A*.
-Performance on Larger Mazes: RBFS and IDA* are expected to scale better in larger mazes due to low memory requirements, while SMA* may struggle if the memory limit is insufficient.
-IDA Optimality: IDA guarantees optimal paths with an admissible heuristic (Manhattan distance), as it explores all nodes within increasing f-cost bounds.
-Sensitivity to Maze Complexity: IDA* may perform poorly in mazes with many nodes having similar f-values, leading to repeated explorations. RBFS may be less sensitive due to its best-first approach, while SMA*’s performance depends on memory availability and maze structure.
-
-Conclusion
+### Conclusion
 The experiments highlight trade-offs between memory and computational efficiency. RBFS and IDA* excel in memory-constrained environments, while SMA* offers flexibility with adjustable memory limits. These findings inform algorithm selection in applications like robotics, gaming, or embedded systems, where memory constraints are critical. Further experiments with varied memory limits or maze complexities could provide deeper insights.
