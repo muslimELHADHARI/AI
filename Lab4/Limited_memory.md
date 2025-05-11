@@ -8,8 +8,10 @@ The following Python code includes the maze generator, implementations of RBFS, 
 import random
 import time
 import sys
-from collections import deque
 from heapq import heappush, heappop
+
+# Increase recursion limit to handle deeper mazes
+sys.setrecursionlimit(10000)
 
 # Node class for search algorithms
 class Node:
@@ -67,22 +69,34 @@ def reconstruct_path(node):
     return path[::-1]
 
 # RBFS Implementation
-def rbfs(grid, start_pos, goal_pos):
+def rbfs(grid, start_pos, goal_pos, timeout=30):
     heuristic = lambda state: manhattan_distance(state, goal_pos)
     root = Node(start_pos, g=0, h=heuristic(start_pos))
-    iterations = [0]  # Track node expansions
-    max_memory = [1]  # Track max nodes in memory
+    iterations = [0]
+    max_memory = [1]
+    visited = set()
+    start_time = time.time()
 
     def rbfs_recursive(node, f_limit):
+        nonlocal iterations, max_memory
         iterations[0] += 1
+        if time.time() - start_time > timeout:
+            raise TimeoutError("RBFS timed out")
         if node.state == goal_pos:
             return node, node.f
         successors = []
+        state_added = False
+        if node.state not in visited:
+            visited.add(node.state)
+            state_added = True
         for succ_state in get_successors(grid, node.state):
-            child = Node(succ_state, parent=node, action=None, g=node.g + 1, h=heuristic(succ_state))
-            successors.append(child)
-        max_memory[0] = max(max_memory[0], len(successors) + 1)  # Current node + successors
+            if succ_state not in visited:
+                child = Node(succ_state, parent=node, action=None, g=node.g + 1, h=heuristic(succ_state))
+                successors.append(child)
+        max_memory[0] = max(max_memory[0], len(successors) + 1)
         if not successors:
+            if state_added:
+                visited.remove(node.state)
             return None, float('inf')
         for s in successors:
             s.f = max(s.g + s.h, node.f)
@@ -90,23 +104,31 @@ def rbfs(grid, start_pos, goal_pos):
             successors.sort(key=lambda x: x.f)
             best = successors[0]
             if best.f > f_limit:
+                if state_added:
+                    visited.remove(node.state)
                 return None, best.f
             alternative = successors[1].f if len(successors) > 1 else float('inf')
             result, best_f = rbfs_recursive(best, min(f_limit, alternative))
             best.f = best_f
             if result:
                 return result, best_f
+        if state_added:
+            visited.remove(node.state)
 
-    start_time = time.time()
-    result, _ = rbfs_recursive(root, float('inf'))
-    exec_time = time.time() - start_time
-    path = reconstruct_path(result) if result else None
-    return path, iterations[0], exec_time, max_memory[0]
+    try:
+        result, _ = rbfs_recursive(root, float('inf'))
+        exec_time = time.time() - start_time
+        path = reconstruct_path(result) if result else None
+        return path, iterations[0], exec_time, max_memory[0]
+    except TimeoutError:
+        print("RBFS timed out after", timeout, "seconds")
+        return None, iterations[0], time.time() - start_time, max_memory[0]
 
-# SMA* Implementation
+# SMA* Implementation (Fixed)
 def sma_star(grid, start_pos, goal_pos, memory_limit):
     heuristic = lambda state: manhattan_distance(state, goal_pos)
     open_list = []
+    start_time = time.time()
     heappush(open_list, (0, id(Node(start_pos)), Node(start_pos, g=0, h=heuristic(start_pos))))
     iterations = [0]
     max_memory = [1]
@@ -114,10 +136,11 @@ def sma_star(grid, start_pos, goal_pos, memory_limit):
     while open_list:
         iterations[0] += 1
         if len(open_list) > memory_limit:
-            # Remove highest f-cost node
             highest_f = max(open_list, key=lambda x: x[0])[0]
             open_list = [x for x in open_list if x[0] != highest_f]
             max_memory[0] = max(max_memory[0], len(open_list) + 1)
+            if not open_list:  # Check if pruning emptied the list
+                return None, iterations[0], time.time() - start_time, max_memory[0]
         _, _, node = heappop(open_list)
         if node.state == goal_pos:
             path = reconstruct_path(node)
@@ -221,12 +244,13 @@ def run_experiments():
         for algo in ['RBFS', 'SMA*', 'IDA*']:
             avg_iterations = sum(r['iterations'] for r in size_result[algo]) / num_trials
             avg_time = sum(r['time'] for r in size_result[algo]) / num_trials
-            avg_path_length = sum(r['path_length'] for r in size_result[algo] if r['path_length']) / num_trials
+            valid_paths = [r['path_length'] for r in size_result[algo] if r['path_length'] is not None]
+            avg_path_length = sum(valid_paths) / len(valid_paths) if valid_paths else None
             avg_memory = sum(r['memory'] for r in size_result[algo]) / num_trials
             print(f"{algo}:")
             print(f"  Avg Iterations: {avg_iterations:.2f}")
             print(f"  Avg Execution Time: {avg_time:.4f} s")
-            print(f"  Avg Path Length: {avg_path_length:.2f}")
+            print(f"  Avg Path Length: {avg_path_length:.2f}" if avg_path_length else "  Avg Path Length: None")
             print(f"  Avg Max Memory: {avg_memory:.2f} nodes")
 
 if __name__ == "__main__":
