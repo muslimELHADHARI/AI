@@ -298,8 +298,6 @@ The experiment results are printed in a table format, showing average iterations
 | 30x30     | SMA*      | 63246.00       | 0.8975                 | 804.80          | 91.80                   |
 | 30x30     | IDA*      | 7356.60        | 0.0685                 | 120.80          | 120.80                  |
 
-To generate actual values, run the code and copy the output. Visualize trends using graphs (e.g., execution time vs. maze size) in your report.
-
 ### Discussion
 Analyze the results to address the lab’s questions:
 - **Memory Efficiency**: RBFS and IDA* typically use linear memory (O(bd), where b is the branching factor and d is the depth), making them more efficient than SMA*, which depends on the memory limit.
