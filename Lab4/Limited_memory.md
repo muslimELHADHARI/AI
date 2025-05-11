@@ -288,11 +288,15 @@ The experiment results are printed in a table format, showing average iterations
 
 | Maze Size | Algorithm | Avg Iterations | Avg Execution Time (s) | Avg Path Length | Avg Max Memory (nodes) |
 |-----------|-----------|----------------|------------------------|-----------------|-------------------------|
-| 10x10     | RBFS      | 48.80          | 0.0004                  | 17.80           | 3.00 nodes                   |
-| 10x10     | SMA*      | [TBD]          | [TBD]                  | [TBD]           | [TBD]                   |
-| 10x10     | IDA*      | [TBD]          | [TBD]                  | [TBD]           | [TBD]                   |
-| 20x20     | RBFS      | [TBD]          | [TBD]                  | [TBD]           | [TBD]                   |
-| ...       | ...       | ...            | ...                    | ...             | ...                     |
+| 10x10     | RBFS      | 48.80          | 0.0004                 | 17.80           | 3.00                    |
+| 10x10     | SMA*      | 146.20         | 0.0013                 | 17.80           | 24.00                   |
+| 10x10     | IDA*      | 89.60          | 0.0004                 | 17.80           | 17.80                   |
+| 20x20     | RBFS      | 456.00         | 0.0027                 | 57.00           | 3.00                    |
+| 20x20     | SMA*      | 13736.00       | 0.2896                 | 191.40          | 65.80                   |
+| 20x20     | IDA*      | 1886.40        | 0.0196                 | 57.00           | 57.00                   |
+| 30x30     | RBFS      | 2973.00        | 0.0166                 | 120.80          | 3.00                    |
+| 30x30     | SMA*      | 63246.00       | 0.8975                 | 804.80          | 91.80                   |
+| 30x30     | IDA*      | 7356.60        | 0.0685                 | 120.80          | 120.80                  |
 
 To generate actual values, run the code and copy the output. Visualize trends using graphs (e.g., execution time vs. maze size) in your report.
 
