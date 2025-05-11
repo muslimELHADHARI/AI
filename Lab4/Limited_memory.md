@@ -288,7 +288,7 @@ The experiment results are printed in a table format, showing average iterations
 
 | Maze Size | Algorithm | Avg Iterations | Avg Execution Time (s) | Avg Path Length | Avg Max Memory (nodes) |
 |-----------|-----------|----------------|------------------------|-----------------|-------------------------|
-| 10x10     | RBFS      | [TBD]          | [TBD]                  | [TBD]           | [TBD]                   |
+| 10x10     | RBFS      | 48.80          | 0.0004                  | 17.80           | 3.00 nodes                   |
 | 10x10     | SMA*      | [TBD]          | [TBD]                  | [TBD]           | [TBD]                   |
 | 10x10     | IDA*      | [TBD]          | [TBD]                  | [TBD]           | [TBD]                   |
 | 20x20     | RBFS      | [TBD]          | [TBD]                  | [TBD]           | [TBD]                   |
